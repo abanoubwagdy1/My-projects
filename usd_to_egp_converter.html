@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USD to EGP Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #result {
+            font-size: 18px;
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>USD to EGP Converter</h1>
+    <p>Enter an amount in USD to see its equivalent in EGP:</p>
+    <input type="number" id="amount" placeholder="Amount in USD" />
+    <button onclick="convert()">Convert</button>
+    <h2 id="result"></h2>
+
+    <script>
+        async function getUsdToEgpRate() {
+            const url = "https://api.exchangerate-api.com/v4/latest/USD";
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("Error fetching exchange rate");
+            }
+            const data = await response.json();
+            return data.rates.EGP; // Returns the rate for USD to EGP
+        }
+
+        async function convert() {
+            const amount = parseFloat(document.getElementById("amount").value);
+            if (isNaN(amount) || amount <= 0) {
+                document.getElementById("result").innerText = "Please enter a valid amount.";
+                return;
+            }
+
+            try {
+                const rate = await getUsdToEgpRate();
+                const result = amount * rate;
+                document.getElementById("result").innerText = 
+                    `${amount} USD is equal to ${result.toFixed(2)} EGP`;
+            } catch (error) {
+                document.getElementById("result").innerText = error.message;
+            }
+        }
+    </script>
+</body>
+</html>
